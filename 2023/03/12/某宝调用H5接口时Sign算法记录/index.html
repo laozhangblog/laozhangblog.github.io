@@ -1,105 +1,179 @@
+
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  
-  
-  <title>某宝调用H5接口时Sign算法记录 | 老张博客</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="用获取商品详情来举例，请求包:">
-<meta property="og:type" content="article">
-<meta property="og:title" content="某宝调用H5接口时Sign算法记录">
-<meta property="og:url" content="https://laozhangblog.github.io/2023/03/12/%E6%9F%90%E5%AE%9D%E8%B0%83%E7%94%A8H5%E6%8E%A5%E5%8F%A3%E6%97%B6Sign%E7%AE%97%E6%B3%95%E8%AE%B0%E5%BD%95/index.html">
-<meta property="og:site_name" content="老张博客">
-<meta property="og:description" content="用获取商品详情来举例，请求包:">
-<meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2023-03-12T14:27:00.302Z">
-<meta property="article:modified_time" content="2023-03-12T14:29:12.680Z">
-<meta property="article:author" content="Zhang">
-<meta name="twitter:card" content="summary">
-  
-    <link rel="alternate" href="/atom.xml" title="老张博客" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-    
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>某宝调用H5接口时Sign算法记录 | 老张博客</title>
+        <meta name="author" content="Zhang" />
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+        <link rel="icon" href="/null" />
+        <script src="https://cdn.staticfile.org/vue/3.2.45/vue.global.prod.min.js"></script>
+<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.2.1/css/all.min.css" />
+<link rel="stylesheet" href="/css/fonts.min.css" />
+<script> const mixins = {}; </script>
 
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
 
-  
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
 
-  
-<meta name="generator" content="Hexo 6.3.0"></head>
+<script src="https://cdn.staticfile.org/highlight.js/11.7.0/highlight.min.js"></script>
+<link
+    rel="stylesheet"
+    href="https://cdn.staticfile.org/highlight.js/11.7.0/styles/github.min.css"
+/>
+<script src="/js/lib/highlight.js"></script>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">老张博客</a>
-      </h1>
-      
+
+
+<script src="/js/lib/preview.js"></script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css" />
+
+    <meta name="generator" content="Hexo 6.3.0"></head>
+    <body>
+        <div id="layout">
+            <transition name="fade">
+            <div id="loading" v-show="loading">
+                <div id="loading-circle">
+                    <h2>LOADING</h2>
+                    <p>加载过慢请开启缓存&ensp;浏览器默认开启</p>
+                    <img src="/images/loading.gif" />
+                </div>
+            </div>
+            </transition>
+            <transition name="into">
+            <div id="main" v-show="!loading">
+                <nav id="menu" ref="menu">
+    <div class="desktop-menu">
+        <a class="title" href="/">
+            <span>老张博客</span>
+        </a>
+        
+        <a href="/">
+            <i class="fa-solid fa-house fa-fw"></i>
+            <span>&ensp;Home</span>
+        </a>
+        
+        <a href="/about">
+            <i class="fa-solid fa-id-card fa-fw"></i>
+            <span>&ensp;About</span>
+        </a>
+        
+        <a href="/archives">
+            <i class="fa-solid fa-box-archive fa-fw"></i>
+            <span>&ensp;Archives</span>
+        </a>
+        
+        <a href="/categories">
+            <i class="fa-solid fa-bookmark fa-fw"></i>
+            <span>&ensp;Categories</span>
+        </a>
+        
+        <a href="/tags">
+            <i class="fa-solid fa-tags fa-fw"></i>
+            <span>&ensp;Tags</span>
+        </a>
+        
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"></a>
-        
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
-        
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laozhangblog.github.io"></form>
-      </div>
+    <div id="mobile-menu">
+        <div class="curtain" v-show="showMenu" @click="showMenu = !showMenu"></div>
+        <div class="title" @click="showMenu = !showMenu">
+            <i class="fa-solid fa-bars fa-fw"></i>
+            <span>&emsp;老张博客</span>
+        </div>
+        <transition name="slide">
+        <div class="items" v-show="showMenu">
+            
+            <a href="/">
+                <div class="item">
+                    <div style="min-width: 20px; max-width: 50px; width: 10%">
+                        <i class="fa-solid fa-house fa-fw"></i>
+                    </div>
+                    <div style="min-width: 100px; max-width: 150%; width: 20%">Home</div>
+                </div>
+            </a>
+            
+            <a href="/about">
+                <div class="item">
+                    <div style="min-width: 20px; max-width: 50px; width: 10%">
+                        <i class="fa-solid fa-id-card fa-fw"></i>
+                    </div>
+                    <div style="min-width: 100px; max-width: 150%; width: 20%">About</div>
+                </div>
+            </a>
+            
+            <a href="/archives">
+                <div class="item">
+                    <div style="min-width: 20px; max-width: 50px; width: 10%">
+                        <i class="fa-solid fa-box-archive fa-fw"></i>
+                    </div>
+                    <div style="min-width: 100px; max-width: 150%; width: 20%">Archives</div>
+                </div>
+            </a>
+            
+            <a href="/categories">
+                <div class="item">
+                    <div style="min-width: 20px; max-width: 50px; width: 10%">
+                        <i class="fa-solid fa-bookmark fa-fw"></i>
+                    </div>
+                    <div style="min-width: 100px; max-width: 150%; width: 20%">Categories</div>
+                </div>
+            </a>
+            
+            <a href="/tags">
+                <div class="item">
+                    <div style="min-width: 20px; max-width: 50px; width: 10%">
+                        <i class="fa-solid fa-tags fa-fw"></i>
+                    </div>
+                    <div style="min-width: 100px; max-width: 150%; width: 20%">Tags</div>
+                </div>
+            </a>
+            
+        </div>
+        </transition>
     </div>
-  </div>
-</header>
+</nav>
 
-      <div class="outer">
-        <section id="main"><article id="post-某宝调用H5接口时Sign算法记录" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2023/03/12/%E6%9F%90%E5%AE%9D%E8%B0%83%E7%94%A8H5%E6%8E%A5%E5%8F%A3%E6%97%B6Sign%E7%AE%97%E6%B3%95%E8%AE%B0%E5%BD%95/" class="article-date">
-  <time class="dt-published" datetime="2023-03-12T14:27:00.302Z" itemprop="datePublished">2023-03-12</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
+                <div class="article">
+    <div>
+        <h1>某宝调用H5接口时Sign算法记录</h1>
+    </div>
+    <div class="info">
+        <span class="date">
+            <span class="icon">
+                <i class="fa-solid fa-calendar fa-fw"></i>
+            </span>
+            2023/3/12
+        </span>
         
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      某宝调用H5接口时Sign算法记录
-    </h1>
-  
-
-      </header>
+        
+    </div>
     
-    <div class="e-content article-entry" itemprop="articleBody">
-      
+    <div class="content" v-pre>
         <p>用获取商品详情来举例，请求包:</p>
 <span id="more"></span>
 
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">GET https://h5api.m.xxxx.com/h5/mtop.xxxx.detail.getdetail/6.0/?jsv=2.6.1&amp;appKey=12574478&amp;t=1626675793885&amp;sign=ccba0f316e36364b1c0c9661625951f9&amp;api=mtop.taobao.detail.getdetail&amp;v=6.0&amp;ttid=202012%40taobao_h5_9.17.0&amp;isSec=0&amp;ecode=0&amp;AntiFlood=true&amp;AntiCreep=true&amp;H5Request=true&amp;type=jsonp&amp;dataType=jsonp&amp;callback=mtopjsonp1&amp;data=%7B%22detail_v%22%3A%223.5.0%22%2C%22exParams%22%3A%22%7B%5C%22appReqFrom%5C%22%3A%5C%22detail%5C%22%2C%5C%22container_type%5C%22%3A%5C%22xdetail%5C%22%2C%5C%22dinamic_v3%5C%22%3A%5C%22true%5C%22%2C%5C%22supportV7%5C%22%3A%5C%22true%5C%22%2C%5C%22ultron2%5C%22%3A%5C%22true%5C%22%7D%22%2C%22itemNumId%22%3A%22649930130576%22%2C%22pageCode%22%3A%22miniAppDetail%22%2C%22_from_%22%3A%22miniapp%22%7D HTTP/1.1</span><br><span class="line">Host: h5api.m.xxxx.com</span><br><span class="line">Accept: */*</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Cookie: xxxxxx</span><br><span class="line">User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1</span><br><span class="line">Accept-Language: zh-cn</span><br><span class="line">Referer: xxxxx</span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<pre><code>
+GET https://h5api.m.xxxx.com/h5/mtop.xxxx.detail.getdetail/6.0/?jsv=2.6.1&amp;appKey=12574478&amp;t=1626675793885&amp;sign=ccba0f316e36364b1c0c9661625951f9&amp;api=mtop.taobao.detail.getdetail&amp;v=6.0&amp;ttid=202012%40taobao_h5_9.17.0&amp;isSec=0&amp;ecode=0&amp;AntiFlood=true&amp;AntiCreep=true&amp;H5Request=true&amp;type=jsonp&amp;dataType=jsonp&amp;callback=mtopjsonp1&amp;data=%7B%22detail_v%22%3A%223.5.0%22%2C%22exParams%22%3A%22%7B%5C%22appReqFrom%5C%22%3A%5C%22detail%5C%22%2C%5C%22container_type%5C%22%3A%5C%22xdetail%5C%22%2C%5C%22dinamic_v3%5C%22%3A%5C%22true%5C%22%2C%5C%22supportV7%5C%22%3A%5C%22true%5C%22%2C%5C%22ultron2%5C%22%3A%5C%22true%5C%22%7D%22%2C%22itemNumId%22%3A%22649930130576%22%2C%22pageCode%22%3A%22miniAppDetail%22%2C%22_from_%22%3A%22miniapp%22%7D HTTP/1.1
+Host: h5api.m.xxxx.com
+Accept: */*
+Connection: keep-alive
+Cookie: xxxxxx
+User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1
+Accept-Language: zh-cn
+Referer: xxxxx
+Accept-Encoding: gzip, deflate, br
 
+</code></pre>
 <p>其中有一个Sign算法</p>
 <h3 id="sign-x3D-ccba0f316e36364b1c0c9661625951f9"><a href="#sign-x3D-ccba0f316e36364b1c0c9661625951f9" class="headerlink" title="sign&#x3D;ccba0f316e36364b1c0c9661625951f9"></a>sign&#x3D;ccba0f316e36364b1c0c9661625951f9</h3><p>从Js打断点跟进去  走到请求，查看生成的参数名称</p>
 <p>K.MD5(“appid&#x3D;” + X + “&amp;business_site&#x3D;” + Y + “&amp;version&#x3D;” + Z.ver + “&amp;dimensions&#x3D;” + ia + “&amp;extend_param&#x3D;” + ra),</p>
@@ -108,134 +182,51 @@
 <p>将参数拼接以后 进行MD5 得到Sign</p>
 <p>接口调用频繁会出现滑块认证   滑块已经解决X82Y 这边就不放出来了。</p>
 
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="https://laozhangblog.github.io/2023/03/12/%E6%9F%90%E5%AE%9D%E8%B0%83%E7%94%A8H5%E6%8E%A5%E5%8F%A3%E6%97%B6Sign%E7%AE%97%E6%B3%95%E8%AE%B0%E5%BD%95/" data-id="clf5huraq0002hguz8a7y8s6o" data-title="某宝调用H5接口时Sign算法记录" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
     
-<nav id="article-nav">
-  
-    <a href="/2023/03/12/%E5%AE%89%E5%8D%937.0+%E5%AE%89%E8%A3%85xp/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
+    
+    
+    
+    
+    
+    
+</div>
+
+                <footer id="footer">
+    <div id="footer-wrap">
+        <div>
+            &copy;
+            2022 - 2023 老张博客
+            <span id="footer-icon">
+                <i class="fa-solid fa-font-awesome fa-fw"></i>
+            </span>
+            &commat;Zhang
+        </div>
+        <div>
+            Based on the <a target="_blank" rel="noopener" href="https://hexo.io">Hexo Engine</a> &amp;
+            <a target="_blank" rel="noopener" href="https://github.com/argvchs/hexo-theme-particlex">ParticleX Theme</a>
+        </div>
         
-          安卓7.0+安装xp
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2023/03/12/%E8%A7%A3%E5%86%B3%E6%96%B0%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E6%A8%A1%E6%8B%9F%E5%99%A8%E5%86%85%E6%A0%B8%E4%B8%8D%E8%83%BD%E6%8A%93%E5%8C%85%E9%97%AE%E9%A2%98/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">解决新版本安卓模拟器内核不能抓包问题</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-
-  
-    
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a></li></ul>
     </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2023/03/12/%E5%AE%89%E5%8D%937.0+%E5%AE%89%E8%A3%85xp/">安卓7.0+安装xp</a>
-          </li>
-        
-          <li>
-            <a href="/2023/03/12/%E6%9F%90%E5%AE%9D%E8%B0%83%E7%94%A8H5%E6%8E%A5%E5%8F%A3%E6%97%B6Sign%E7%AE%97%E6%B3%95%E8%AE%B0%E5%BD%95/">某宝调用H5接口时Sign算法记录</a>
-          </li>
-        
-          <li>
-            <a href="/2023/03/12/%E8%A7%A3%E5%86%B3%E6%96%B0%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E6%A8%A1%E6%8B%9F%E5%99%A8%E5%86%85%E6%A0%B8%E4%B8%8D%E8%83%BD%E6%8A%93%E5%8C%85%E9%97%AE%E9%A2%98/">解决新版本安卓模拟器内核不能抓包问题</a>
-          </li>
-        
-          <li>
-            <a href="/2023/03/12/%E5%9C%A8PHP%E5%86%85%E4%BD%BF%E7%94%A8CryptoJS%E4%B8%AD%E7%9A%84RC4%E5%8A%A0%E5%AF%86%E8%A7%A3%E5%AF%86%EF%BC%88%E9%9D%9E%E5%AF%B9%E7%A7%B0%EF%BC%89/">在PHP内使用CryptoJS中的RC4加密解密（非对称）</a>
-          </li>
-        
-          <li>
-            <a href="/2023/03/12/hello-world/">Hello World</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2023 Zhang<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
 </footer>
 
-    </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.4.1.min.js"></script>
-
-
-
-  
-<script src="/fancybox/jquery.fancybox.min.js"></script>
+            </div>
+            </transition>
+            
+            <transition name="fade">
+            <div id="preview" ref="preview" v-show="previewShow">
+                <img id="preview-content" ref="previewContent" />
+            </div>
+            </transition>
+            
+        </div>
+        <script src="/js/main.js"></script>
+        
+        
 
 
 
 
-<script src="/js/script.js"></script>
-
-
-
-
-
-  </div>
-</body>
+        
+    </body>
 </html>
