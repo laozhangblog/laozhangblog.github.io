@@ -1,0 +1,1107 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>一个非正常格式公钥的RSA加密 | 老张博客</title>
+        <meta name="author" content="Zhang" />
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+        <link rel="icon" href="/./images/header.jpg" />
+        <script src="https://cdn.staticfile.org/vue/3.2.45/vue.global.prod.min.js"></script>
+<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.2.1/css/all.min.css" />
+<link rel="stylesheet" href="/css/fonts.min.css" />
+<script> const mixins = {}; </script>
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+
+
+<script src="https://cdn.staticfile.org/highlight.js/11.7.0/highlight.min.js"></script>
+<link
+    rel="stylesheet"
+    href="https://cdn.staticfile.org/highlight.js/11.7.0/styles/github.min.css"
+/>
+<script src="/js/lib/highlight.js"></script>
+
+
+
+<script src="/js/lib/preview.js"></script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css" />
+
+    <meta name="generator" content="Hexo 6.3.0"></head>
+    <body>
+        <div id="layout">
+            <transition name="fade">
+            <div id="loading" v-show="loading">
+                <div id="loading-circle">
+                    <h2>LOADING</h2>
+                    <p>加载过慢请开启缓存&ensp;浏览器默认开启</p>
+                    <img src="/images/loading.gif" />
+                </div>
+            </div>
+            </transition>
+            <transition name="into">
+            <div id="main" v-show="!loading">
+                <nav id="menu" ref="menu">
+    <div class="desktop-menu">
+        <a class="title" href="/">
+            <span>老张博客</span>
+        </a>
+        
+        <a href="/">
+            <i class="fa-solid fa-house fa-fw"></i>
+            <span>&ensp;Home</span>
+        </a>
+        
+    </div>
+    <div id="mobile-menu">
+        <div class="curtain" v-show="showMenu" @click="showMenu = !showMenu"></div>
+        <div class="title" @click="showMenu = !showMenu">
+            <i class="fa-solid fa-bars fa-fw"></i>
+            <span>&emsp;老张博客</span>
+        </div>
+        <transition name="slide">
+        <div class="items" v-show="showMenu">
+            
+            <a href="/">
+                <div class="item">
+                    <div style="min-width: 20px; max-width: 50px; width: 10%">
+                        <i class="fa-solid fa-house fa-fw"></i>
+                    </div>
+                    <div style="min-width: 100px; max-width: 150%; width: 20%">Home</div>
+                </div>
+            </a>
+            
+        </div>
+        </transition>
+    </div>
+</nav>
+
+                <div class="article">
+    <div>
+        <h1>一个非正常格式公钥的RSA加密</h1>
+    </div>
+    <div class="info">
+        <span class="date">
+            <span class="icon">
+                <i class="fa-solid fa-calendar fa-fw"></i>
+            </span>
+            2023/3/13
+        </span>
+        
+        
+    </div>
+    
+    <div class="content" v-pre>
+        <p>拔了一下某个网站的加密，Rsa的，但是公钥不是常见的格式，记录一下，以后方便复制</p>
+<span id="more"></span>
+
+<pre><code class="[javascript]">
+var window = &#123;&#125;;
+var navigator = &#123;&#125;;
+(function(av) &#123;
+        function l() &#123;
+            this.i = 0;
+            this.j = 0;
+            this.S = new Array()
+        &#125;
+        function f(aI) &#123;
+            var aH, z, aG;
+            for (aH = 0; aH &lt; 256; ++aH) &#123;
+                this.S[aH] = aH
+            &#125;
+            z = 0;
+            for (aH = 0; aH &lt; 256; ++aH) &#123;
+                z = (z + this.S[aH] + aI[aH % aI.length]) &amp; 255;
+                aG = this.S[aH];
+                this.S[aH] = this.S[z];
+                this.S[z] = aG
+            &#125;
+            this.i = 0;
+            this.j = 0
+        &#125;
+        function b() &#123;
+            var z;
+            this.i = (this.i + 1) &amp; 255;
+            this.j = (this.j + this.S[this.i]) &amp; 255;
+            z = this.S[this.i];
+            this.S[this.i] = this.S[this.j];
+            this.S[this.j] = z;
+            return this.S[(z + this.S[this.i]) &amp; 255]
+        &#125;
+        l.prototype.init = f;
+        l.prototype.next = b;
+        function au() &#123;
+            return new l()
+        &#125;
+        var O = 256;
+        var n;
+        var V;
+        var ag;
+        function d(t) &#123;
+            V[ag++] ^= t &amp; 255;
+            V[ag++] ^= (t &gt;&gt; 8) &amp; 255;
+            V[ag++] ^= (t &gt;&gt; 16) &amp; 255;
+            V[ag++] ^= (t &gt;&gt; 24) &amp; 255;
+            if (ag &gt;= O) &#123;
+                ag -= O
+            &#125;
+        &#125;
+        function U() &#123;
+            d(new Date().getTime())
+        &#125;
+        if (V == null) &#123;
+            V = new Array();
+            ag = 0;
+            var K;
+            if (navigator.appName == &quot;Netscape&quot; &amp;&amp; navigator.appVersion &lt; &quot;5&quot; &amp;&amp; av.crypto) &#123;
+                var H = av.crypto.random(32);
+                for (K = 0; K &lt; H.length; ++K) &#123;
+                    V[ag++] = H.charCodeAt(K) &amp; 255
+                &#125;
+            &#125;
+            while (ag &lt; O) &#123;
+                K = Math.floor(65536 * Math.random());
+                V[ag++] = K &gt;&gt;&gt; 8;
+                V[ag++] = K &amp; 255
+            &#125;
+            ag = 0;
+            U()
+        &#125;
+        function E() &#123;
+            if (n == null) &#123;
+                U();
+                n = au();
+                n.init(V);
+                for (ag = 0; ag &lt; V.length; ++ag) &#123;
+                    V[ag] = 0
+                &#125;
+                ag = 0
+            &#125;
+            return n.next()
+        &#125;
+        function aB(z) &#123;
+            var t;
+            for (t = 0; t &lt; z.length; ++t) &#123;
+                z[t] = E()
+            &#125;
+        &#125;
+        function ah() &#123;&#125;
+        ah.prototype.nextBytes = aB;
+        var aC;
+        var an = 244837814094590;
+        var ac = ((an &amp; 16777215) == 15715070);
+        function ay(z, t, aG) &#123;
+            if (z != null) &#123;
+                if (&quot;number&quot; == typeof z) &#123;
+                    this.fromNumber(z, t, aG)
+                &#125; else &#123;
+                    if (t == null &amp;&amp; &quot;string&quot; != typeof z) &#123;
+                        this.fromString(z, 256)
+                    &#125; else &#123;
+                        this.fromString(z, t)
+                    &#125;
+                &#125;
+            &#125;
+        &#125;
+        function i() &#123;
+            return new ay(null)
+        &#125;
+        function c(aI, t, z, aH, aK, aJ) &#123;
+            while (--aJ &gt;= 0) &#123;
+                var aG = t * this[aI++] + z[aH] + aK;
+                aK = Math.floor(aG / 67108864);
+                z[aH++] = aG &amp; 67108863
+            &#125;
+            return aK
+        &#125;
+        function aE(aI, aN, aO, aH, aL, t) &#123;
+            var aK = aN &amp; 32767
+                , aM = aN &gt;&gt; 15;
+            while (--t &gt;= 0) &#123;
+                var aG = this[aI] &amp; 32767;
+                var aJ = this[aI++] &gt;&gt; 15;
+                var z = aM * aG + aJ * aK;
+                aG = aK * aG + ((z &amp; 32767) &lt;&lt; 15) + aO[aH] + (aL &amp; 1073741823);
+                aL = (aG &gt;&gt;&gt; 30) + (z &gt;&gt;&gt; 15) + aM * aJ + (aL &gt;&gt;&gt; 30);
+                aO[aH++] = aG &amp; 1073741823
+            &#125;
+            return aL
+        &#125;
+        function aD(aI, aN, aO, aH, aL, t) &#123;
+            var aK = aN &amp; 16383
+                , aM = aN &gt;&gt; 14;
+            while (--t &gt;= 0) &#123;
+                var aG = this[aI] &amp; 16383;
+                var aJ = this[aI++] &gt;&gt; 14;
+                var z = aM * aG + aJ * aK;
+                aG = aK * aG + ((z &amp; 16383) &lt;&lt; 14) + aO[aH] + aL;
+                aL = (aG &gt;&gt; 28) + (z &gt;&gt; 14) + aM * aJ;
+                aO[aH++] = aG &amp; 268435455
+            &#125;
+            return aL
+        &#125;
+        if (ac &amp;&amp; (navigator.appName == &quot;Microsoft Internet Explorer&quot;)) &#123;
+            ay.prototype.am = aE;
+            aC = 30
+        &#125; else &#123;
+            if (ac &amp;&amp; (navigator.appName != &quot;Netscape&quot;)) &#123;
+                ay.prototype.am = c;
+                aC = 26
+            &#125; else &#123;
+                ay.prototype.am = aD;
+                aC = 28
+            &#125;
+        &#125;
+        ay.prototype.DB = aC;
+        ay.prototype.DM = ((1 &lt;&lt; aC) - 1);
+        ay.prototype.DV = (1 &lt;&lt; aC);
+        var ae = 52;
+        ay.prototype.FV = Math.pow(2, ae);
+        ay.prototype.F1 = ae - aC;
+        ay.prototype.F2 = 2 * aC - ae;
+        var aj = &quot;0123456789abcdefghijklmnopqrstuvwxyz&quot;;
+        var al = new Array();
+        var aw, x;
+        aw = &quot;0&quot;.charCodeAt(0);
+        for (x = 0; x &lt;= 9; ++x) &#123;
+            al[aw++] = x
+        &#125;
+        aw = &quot;a&quot;.charCodeAt(0);
+        for (x = 10; x &lt; 36; ++x) &#123;
+            al[aw++] = x
+        &#125;
+        aw = &quot;A&quot;.charCodeAt(0);
+        for (x = 10; x &lt; 36; ++x) &#123;
+            al[aw++] = x
+        &#125;
+        function aF(t) &#123;
+            return aj.charAt(t)
+        &#125;
+        function C(z, t) &#123;
+            var aG = al[z.charCodeAt(t)];
+            return (aG == null) ? -1 : aG
+        &#125;
+        function ab(z) &#123;
+            for (var t = this.t - 1; t &gt;= 0; --t) &#123;
+                z[t] = this[t]
+            &#125;
+            z.t = this.t;
+            z.s = this.s
+        &#125;
+        function o(t) &#123;
+            this.t = 1;
+            this.s = (t &lt; 0) ? -1 : 0;
+            if (t &gt; 0) &#123;
+                this[0] = t
+            &#125; else &#123;
+                if (t &lt; -1) &#123;
+                    this[0] = t + DV
+                &#125; else &#123;
+                    this.t = 0
+                &#125;
+            &#125;
+        &#125;
+        function e(t) &#123;
+            var z = i();
+            z.fromInt(t);
+            return z
+        &#125;
+        function y(aK, z) &#123;
+            var aH;
+            if (z == 16) &#123;
+                aH = 4
+            &#125; else &#123;
+                if (z == 8) &#123;
+                    aH = 3
+                &#125; else &#123;
+                    if (z == 256) &#123;
+                        aH = 8
+                    &#125; else &#123;
+                        if (z == 2) &#123;
+                            aH = 1
+                        &#125; else &#123;
+                            if (z == 32) &#123;
+                                aH = 5
+                            &#125; else &#123;
+                                if (z == 4) &#123;
+                                    aH = 2
+                                &#125; else &#123;
+                                    this.fromRadix(aK, z);
+                                    return
+                                &#125;
+                            &#125;
+                        &#125;
+                    &#125;
+                &#125;
+            &#125;
+            this.t = 0;
+            this.s = 0;
+            var aJ = aK.length
+                , aG = false
+                , aI = 0;
+            while (--aJ &gt;= 0) &#123;
+                var t = (aH == 8) ? aK[aJ] &amp; 255 : C(aK, aJ);
+                if (t &lt; 0) &#123;
+                    if (aK.charAt(aJ) == &quot;-&quot;) &#123;
+                        aG = true
+                    &#125;
+                    continue
+                &#125;
+                aG = false;
+                if (aI == 0) &#123;
+                    this[this.t++] = t
+                &#125; else &#123;
+                    if (aI + aH &gt; this.DB) &#123;
+                        this[this.t - 1] |= (t &amp; ((1 &lt;&lt; (this.DB - aI)) - 1)) &lt;&lt; aI;
+                        this[this.t++] = (t &gt;&gt; (this.DB - aI))
+                    &#125; else &#123;
+                        this[this.t - 1] |= t &lt;&lt; aI
+                    &#125;
+                &#125;
+                aI += aH;
+                if (aI &gt;= this.DB) &#123;
+                    aI -= this.DB
+                &#125;
+            &#125;
+            if (aH == 8 &amp;&amp; (aK[0] &amp; 128) != 0) &#123;
+                this.s = -1;
+                if (aI &gt; 0) &#123;
+                    this[this.t - 1] |= ((1 &lt;&lt; (this.DB - aI)) - 1) &lt;&lt; aI
+                &#125;
+            &#125;
+            this.clamp();
+            if (aG) &#123;
+                ay.ZERO.subTo(this, this)
+            &#125;
+        &#125;
+        function Q() &#123;
+            var t = this.s &amp; this.DM;
+            while (this.t &gt; 0 &amp;&amp; this[this.t - 1] == t) &#123;
+                --this.t
+            &#125;
+        &#125;
+        function r(z) &#123;
+            if (this.s &lt; 0) &#123;
+                return &quot;-&quot; + this.negate().toString(z)
+            &#125;
+            var aG;
+            if (z == 16) &#123;
+                aG = 4
+            &#125; else &#123;
+                if (z == 8) &#123;
+                    aG = 3
+                &#125; else &#123;
+                    if (z == 2) &#123;
+                        aG = 1
+                    &#125; else &#123;
+                        if (z == 32) &#123;
+                            aG = 5
+                        &#125; else &#123;
+                            if (z == 4) &#123;
+                                aG = 2
+                            &#125; else &#123;
+                                return this.toRadix(z)
+                            &#125;
+                        &#125;
+                    &#125;
+                &#125;
+            &#125;
+            var aI = (1 &lt;&lt; aG) - 1, aL, t = false, aJ = &quot;&quot;, aH = this.t;
+            var aK = this.DB - (aH * this.DB) % aG;
+            if (aH-- &gt; 0) &#123;
+                if (aK &lt; this.DB &amp;&amp; (aL = this[aH] &gt;&gt; aK) &gt; 0) &#123;
+                    t = true;
+                    aJ = aF(aL)
+                &#125;
+                while (aH &gt;= 0) &#123;
+                    if (aK &lt; aG) &#123;
+                        aL = (this[aH] &amp; ((1 &lt;&lt; aK) - 1)) &lt;&lt; (aG - aK);
+                        aL |= this[--aH] &gt;&gt; (aK += this.DB - aG)
+                    &#125; else &#123;
+                        aL = (this[aH] &gt;&gt; (aK -= aG)) &amp; aI;
+                        if (aK &lt;= 0) &#123;
+                            aK += this.DB;
+                            --aH
+                        &#125;
+                    &#125;
+                    if (aL &gt; 0) &#123;
+                        t = true
+                    &#125;
+                    if (t) &#123;
+                        aJ += aF(aL)
+                    &#125;
+                &#125;
+            &#125;
+            return t ? aJ : &quot;0&quot;
+        &#125;
+        function T() &#123;
+            var t = i();
+            ay.ZERO.subTo(this, t);
+            return t
+        &#125;
+        function aq() &#123;
+            return (this.s &lt; 0) ? this.negate() : this
+        &#125;
+        function I(t) &#123;
+            var aG = this.s - t.s;
+            if (aG != 0) &#123;
+                return aG
+            &#125;
+            var z = this.t;
+            aG = z - t.t;
+            if (aG != 0) &#123;
+                return aG
+            &#125;
+            while (--z &gt;= 0) &#123;
+                if ((aG = this[z] - t[z]) != 0) &#123;
+                    return aG
+                &#125;
+            &#125;
+            return 0
+        &#125;
+        function k(z) &#123;
+            var aH = 1, aG;
+            if ((aG = z &gt;&gt;&gt; 16) != 0) &#123;
+                z = aG;
+                aH += 16
+            &#125;
+            if ((aG = z &gt;&gt; 8) != 0) &#123;
+                z = aG;
+                aH += 8
+            &#125;
+            if ((aG = z &gt;&gt; 4) != 0) &#123;
+                z = aG;
+                aH += 4
+            &#125;
+            if ((aG = z &gt;&gt; 2) != 0) &#123;
+                z = aG;
+                aH += 2
+            &#125;
+            if ((aG = z &gt;&gt; 1) != 0) &#123;
+                z = aG;
+                aH += 1
+            &#125;
+            return aH
+        &#125;
+        function w() &#123;
+            if (this.t &lt;= 0) &#123;
+                return 0
+            &#125;
+            return this.DB * (this.t - 1) + k(this[this.t - 1] ^ (this.s &amp; this.DM))
+        &#125;
+        function ax(aG, z) &#123;
+            var t;
+            for (t = this.t - 1; t &gt;= 0; --t) &#123;
+                z[t + aG] = this[t]
+            &#125;
+            for (t = aG - 1; t &gt;= 0; --t) &#123;
+                z[t] = 0
+            &#125;
+            z.t = this.t + aG;
+            z.s = this.s
+        &#125;
+        function aa(aG, z) &#123;
+            for (var t = aG; t &lt; this.t; ++t) &#123;
+                z[t - aG] = this[t]
+            &#125;
+            z.t = Math.max(this.t - aG, 0);
+            z.s = this.s
+        &#125;
+        function u(aL, aH) &#123;
+            var z = aL % this.DB;
+            var t = this.DB - z;
+            var aJ = (1 &lt;&lt; t) - 1;
+            var aI = Math.floor(aL / this.DB), aK = (this.s &lt;&lt; z) &amp; this.DM, aG;
+            for (aG = this.t - 1; aG &gt;= 0; --aG) &#123;
+                aH[aG + aI + 1] = (this[aG] &gt;&gt; t) | aK;
+                aK = (this[aG] &amp; aJ) &lt;&lt; z
+            &#125;
+            for (aG = aI - 1; aG &gt;= 0; --aG) &#123;
+                aH[aG] = 0
+            &#125;
+            aH[aI] = aK;
+            aH.t = this.t + aI + 1;
+            aH.s = this.s;
+            aH.clamp()
+        &#125;
+        function m(aK, aH) &#123;
+            aH.s = this.s;
+            var aI = Math.floor(aK / this.DB);
+            if (aI &gt;= this.t) &#123;
+                aH.t = 0;
+                return
+            &#125;
+            var z = aK % this.DB;
+            var t = this.DB - z;
+            var aJ = (1 &lt;&lt; z) - 1;
+            aH[0] = this[aI] &gt;&gt; z;
+            for (var aG = aI + 1; aG &lt; this.t; ++aG) &#123;
+                aH[aG - aI - 1] |= (this[aG] &amp; aJ) &lt;&lt; t;
+                aH[aG - aI] = this[aG] &gt;&gt; z
+            &#125;
+            if (z &gt; 0) &#123;
+                aH[this.t - aI - 1] |= (this.s &amp; aJ) &lt;&lt; t
+            &#125;
+            aH.t = this.t - aI;
+            aH.clamp()
+        &#125;
+        function af(z, aH) &#123;
+            var aG = 0
+                , aI = 0
+                , t = Math.min(z.t, this.t);
+            while (aG &lt; t) &#123;
+                aI += this[aG] - z[aG];
+                aH[aG++] = aI &amp; this.DM;
+                aI &gt;&gt;= this.DB
+            &#125;
+            if (z.t &lt; this.t) &#123;
+                aI -= z.s;
+                while (aG &lt; this.t) &#123;
+                    aI += this[aG];
+                    aH[aG++] = aI &amp; this.DM;
+                    aI &gt;&gt;= this.DB
+                &#125;
+                aI += this.s
+            &#125; else &#123;
+                aI += this.s;
+                while (aG &lt; z.t) &#123;
+                    aI -= z[aG];
+                    aH[aG++] = aI &amp; this.DM;
+                    aI &gt;&gt;= this.DB
+                &#125;
+                aI -= z.s
+            &#125;
+            aH.s = (aI &lt; 0) ? -1 : 0;
+            if (aI &lt; -1) &#123;
+                aH[aG++] = this.DV + aI
+            &#125; else &#123;
+                if (aI &gt; 0) &#123;
+                    aH[aG++] = aI
+                &#125;
+            &#125;
+            aH.t = aG;
+            aH.clamp()
+        &#125;
+        function F(z, aH) &#123;
+            var t = this.abs()
+                , aI = z.abs();
+            var aG = t.t;
+            aH.t = aG + aI.t;
+            while (--aG &gt;= 0) &#123;
+                aH[aG] = 0
+            &#125;
+            for (aG = 0; aG &lt; aI.t; ++aG) &#123;
+                aH[aG + t.t] = t.am(0, aI[aG], aH, aG, 0, t.t)
+            &#125;
+            aH.s = 0;
+            aH.clamp();
+            if (this.s != z.s) &#123;
+                ay.ZERO.subTo(aH, aH)
+            &#125;
+        &#125;
+        function S(aG) &#123;
+            var t = this.abs();
+            var z = aG.t = 2 * t.t;
+            while (--z &gt;= 0) &#123;
+                aG[z] = 0
+            &#125;
+            for (z = 0; z &lt; t.t - 1; ++z) &#123;
+                var aH = t.am(z, t[z], aG, 2 * z, 0, 1);
+                if ((aG[z + t.t] += t.am(z + 1, 2 * t[z], aG, 2 * z + 1, aH, t.t - z - 1)) &gt;= t.DV) &#123;
+                    aG[z + t.t] -= t.DV;
+                    aG[z + t.t + 1] = 1
+                &#125;
+            &#125;
+            if (aG.t &gt; 0) &#123;
+                aG[aG.t - 1] += t.am(z, t[z], aG, 2 * z, 0, 1)
+            &#125;
+            aG.s = 0;
+            aG.clamp()
+        &#125;
+        function G(aO, aL, aK) &#123;
+            var aU = aO.abs();
+            if (aU.t &lt;= 0) &#123;
+                return
+            &#125;
+            var aM = this.abs();
+            if (aM.t &lt; aU.t) &#123;
+                if (aL != null) &#123;
+                    aL.fromInt(0)
+                &#125;
+                if (aK != null) &#123;
+                    this.copyTo(aK)
+                &#125;
+                return
+            &#125;
+            if (aK == null) &#123;
+                aK = i()
+            &#125;
+            var aI = i()
+                , z = this.s
+                , aN = aO.s;
+            var aT = this.DB - k(aU[aU.t - 1]);
+            if (aT &gt; 0) &#123;
+                aU.lShiftTo(aT, aI);
+                aM.lShiftTo(aT, aK)
+            &#125; else &#123;
+                aU.copyTo(aI);
+                aM.copyTo(aK)
+            &#125;
+            var aQ = aI.t;
+            var aG = aI[aQ - 1];
+            if (aG == 0) &#123;
+                return
+            &#125;
+            var aP = aG * (1 &lt;&lt; this.F1) + ((aQ &gt; 1) ? aI[aQ - 2] &gt;&gt; this.F2 : 0);
+            var aX = this.FV / aP
+                , aW = (1 &lt;&lt; this.F1) / aP
+                , aV = 1 &lt;&lt; this.F2;
+            var aS = aK.t
+                , aR = aS - aQ
+                , aJ = (aL == null) ? i() : aL;
+            aI.dlShiftTo(aR, aJ);
+            if (aK.compareTo(aJ) &gt;= 0) &#123;
+                aK[aK.t++] = 1;
+                aK.subTo(aJ, aK)
+            &#125;
+            ay.ONE.dlShiftTo(aQ, aJ);
+            aJ.subTo(aI, aI);
+            while (aI.t &lt; aQ) &#123;
+                aI[aI.t++] = 0
+            &#125;
+            while (--aR &gt;= 0) &#123;
+                var aH = (aK[--aS] == aG) ? this.DM : Math.floor(aK[aS] * aX + (aK[aS - 1] + aV) * aW);
+                if ((aK[aS] += aI.am(0, aH, aK, aR, 0, aQ)) &lt; aH) &#123;
+                    aI.dlShiftTo(aR, aJ);
+                    aK.subTo(aJ, aK);
+                    while (aK[aS] &lt; --aH) &#123;
+                        aK.subTo(aJ, aK)
+                    &#125;
+                &#125;
+            &#125;
+            if (aL != null) &#123;
+                aK.drShiftTo(aQ, aL);
+                if (z != aN) &#123;
+                    ay.ZERO.subTo(aL, aL)
+                &#125;
+            &#125;
+            aK.t = aQ;
+            aK.clamp();
+            if (aT &gt; 0) &#123;
+                aK.rShiftTo(aT, aK)
+            &#125;
+            if (z &lt; 0) &#123;
+                ay.ZERO.subTo(aK, aK)
+            &#125;
+        &#125;
+        function P(t) &#123;
+            var z = i();
+            this.abs().divRemTo(t, null, z);
+            if (this.s &lt; 0 &amp;&amp; z.compareTo(ay.ZERO) &gt; 0) &#123;
+                t.subTo(z, z)
+            &#125;
+            return z
+        &#125;
+        function M(t) &#123;
+            this.m = t
+        &#125;
+        function X(t) &#123;
+            if (t.s &lt; 0 || t.compareTo(this.m) &gt;= 0) &#123;
+                return t.mod(this.m)
+            &#125; else &#123;
+                return t
+            &#125;
+        &#125;
+        function ap(t) &#123;
+            return t
+        &#125;
+        function L(t) &#123;
+            t.divRemTo(this.m, null, t)
+        &#125;
+        function J(t, aG, z) &#123;
+            t.multiplyTo(aG, z);
+            this.reduce(z)
+        &#125;
+        function aA(t, z) &#123;
+            t.squareTo(z);
+            this.reduce(z)
+        &#125;
+        M.prototype.convert = X;
+        M.prototype.revert = ap;
+        M.prototype.reduce = L;
+        M.prototype.mulTo = J;
+        M.prototype.sqrTo = aA;
+        function D() &#123;
+            if (this.t &lt; 1) &#123;
+                return 0
+            &#125;
+            var t = this[0];
+            if ((t &amp; 1) == 0) &#123;
+                return 0
+            &#125;
+            var z = t &amp; 3;
+            z = (z * (2 - (t &amp; 15) * z)) &amp; 15;
+            z = (z * (2 - (t &amp; 255) * z)) &amp; 255;
+            z = (z * (2 - (((t &amp; 65535) * z) &amp; 65535))) &amp; 65535;
+            z = (z * (2 - t * z % this.DV)) % this.DV;
+            return (z &gt; 0) ? this.DV - z : -z
+        &#125;
+        function g(t) &#123;
+            this.m = t;
+            this.mp = t.invDigit();
+            this.mpl = this.mp &amp; 32767;
+            this.mph = this.mp &gt;&gt; 15;
+            this.um = (1 &lt;&lt; (t.DB - 15)) - 1;
+            this.mt2 = 2 * t.t
+        &#125;
+        function ao(t) &#123;
+            var z = i();
+            t.abs().dlShiftTo(this.m.t, z);
+            z.divRemTo(this.m, null, z);
+            if (t.s &lt; 0 &amp;&amp; z.compareTo(ay.ZERO) &gt; 0) &#123;
+                this.m.subTo(z, z)
+            &#125;
+            return z
+        &#125;
+        function az(t) &#123;
+            var z = i();
+            t.copyTo(z);
+            this.reduce(z);
+            return z
+        &#125;
+        function R(t) &#123;
+            while (t.t &lt;= this.mt2) &#123;
+                t[t.t++] = 0
+            &#125;
+            for (var aG = 0; aG &lt; this.m.t; ++aG) &#123;
+                var z = t[aG] &amp; 32767;
+                var aH = (z * this.mpl + (((z * this.mph + (t[aG] &gt;&gt; 15) * this.mpl) &amp; this.um) &lt;&lt; 15)) &amp; t.DM;
+                z = aG + this.m.t;
+                t[z] += this.m.am(0, aH, t, aG, 0, this.m.t);
+                while (t[z] &gt;= t.DV) &#123;
+                    t[z] -= t.DV;
+                    t[++z]++
+                &#125;
+            &#125;
+            t.clamp();
+            t.drShiftTo(this.m.t, t);
+            if (t.compareTo(this.m) &gt;= 0) &#123;
+                t.subTo(this.m, t)
+            &#125;
+        &#125;
+        function ar(t, z) &#123;
+            t.squareTo(z);
+            this.reduce(z)
+        &#125;
+        function B(t, aG, z) &#123;
+            t.multiplyTo(aG, z);
+            this.reduce(z)
+        &#125;
+        g.prototype.convert = ao;
+        g.prototype.revert = az;
+        g.prototype.reduce = R;
+        g.prototype.mulTo = B;
+        g.prototype.sqrTo = ar;
+        function j() &#123;
+            return ((this.t &gt; 0) ? (this[0] &amp; 1) : this.s) == 0
+        &#125;
+        function A(aL, aM) &#123;
+            if (aL &gt; 4294967295 || aL &lt; 1) &#123;
+                return ay.ONE
+            &#125;
+            var aK = i()
+                , aG = i()
+                , aJ = aM.convert(this)
+                , aI = k(aL) - 1;
+            aJ.copyTo(aK);
+            while (--aI &gt;= 0) &#123;
+                aM.sqrTo(aK, aG);
+                if ((aL &amp; (1 &lt;&lt; aI)) &gt; 0) &#123;
+                    aM.mulTo(aG, aJ, aK)
+                &#125; else &#123;
+                    var aH = aK;
+                    aK = aG;
+                    aG = aH
+                &#125;
+            &#125;
+            return aM.revert(aK)
+        &#125;
+        function at(aG, t) &#123;
+            var aH;
+            if (aG &lt; 256 || t.isEven()) &#123;
+                aH = new M(t)
+            &#125; else &#123;
+                aH = new g(t)
+            &#125;
+            return this.exp(aG, aH)
+        &#125;
+        ay.prototype.copyTo = ab;
+        ay.prototype.fromInt = o;
+        ay.prototype.fromString = y;
+        ay.prototype.clamp = Q;
+        ay.prototype.dlShiftTo = ax;
+        ay.prototype.drShiftTo = aa;
+        ay.prototype.lShiftTo = u;
+        ay.prototype.rShiftTo = m;
+        ay.prototype.subTo = af;
+        ay.prototype.multiplyTo = F;
+        ay.prototype.squareTo = S;
+        ay.prototype.divRemTo = G;
+        ay.prototype.invDigit = D;
+        ay.prototype.isEven = j;
+        ay.prototype.exp = A;
+        ay.prototype.toString = r;
+        ay.prototype.negate = T;
+        ay.prototype.abs = aq;
+        ay.prototype.compareTo = I;
+        ay.prototype.bitLength = w;
+        ay.prototype.mod = P;
+        ay.prototype.modPowInt = at;
+        ay.ZERO = e(0);
+        ay.ONE = e(1);
+        function h(z, t) &#123;
+            return new ay(z,t)
+        &#125;
+        function am(aG, aH) &#123;
+            var t = &quot;&quot;;
+            var z = 0;
+            while (z + aH &lt; aG.length) &#123;
+                t += aG.substring(z, z + aH) + &quot;\n&quot;;
+                z += aH
+            &#125;
+            return t + aG.substring(z, aG.length)
+        &#125;
+        function s(t) &#123;
+            if (t &lt; 16) &#123;
+                return &quot;0&quot; + t.toString(16)
+            &#125; else &#123;
+                return t.toString(16)
+            &#125;
+        &#125;
+        function ak(aH, aK) &#123;
+            if (aK &lt; aH.length + 11) &#123;
+                alert(&quot;Message too long for RSA&quot;);
+                return null
+            &#125;
+            var aJ = new Array();
+            var aG = aH.length - 1;
+            while (aG &gt;= 0 &amp;&amp; aK &gt; 0) &#123;
+                var aI = aH.charCodeAt(aG--);
+                if (aI &lt; 128) &#123;
+                    aJ[--aK] = aI
+                &#125; else &#123;
+                    if ((aI &gt; 127) &amp;&amp; (aI &lt; 2048)) &#123;
+                        aJ[--aK] = (aI &amp; 63) | 128;
+                        aJ[--aK] = (aI &gt;&gt; 6) | 192
+                    &#125; else &#123;
+                        aJ[--aK] = (aI &amp; 63) | 128;
+                        aJ[--aK] = ((aI &gt;&gt; 6) &amp; 63) | 128;
+                        aJ[--aK] = (aI &gt;&gt; 12) | 224
+                    &#125;
+                &#125;
+            &#125;
+            aJ[--aK] = 0;
+            var z = new ah();
+            var t = new Array();
+            while (aK &gt; 2) &#123;
+                t[0] = 0;
+                while (t[0] == 0) &#123;
+                    z.nextBytes(t)
+                &#125;
+                aJ[--aK] = t[0]
+            &#125;
+            aJ[--aK] = 2;
+            aJ[--aK] = 0;
+            return new ay(aJ)
+        &#125;
+        function N() &#123;
+            this.n = null;
+            this.e = 0;
+            this.d = null;
+            this.p = null;
+            this.q = null;
+            this.dmp1 = null;
+            this.dmq1 = null;
+            this.coeff = null
+        &#125;
+        function p(z, t) &#123;
+            if (z != null &amp;&amp; t != null &amp;&amp; z.length &gt; 0 &amp;&amp; t.length &gt; 0) &#123;
+                this.n = h(z, 16);
+                this.e = parseInt(t, 16)
+            &#125; else &#123;
+                alert(&quot;Invalid RSA public key&quot;)
+            &#125;
+        &#125;
+        function Z(t) &#123;
+            return t.modPowInt(this.e, this.n)
+        &#125;
+        function q(aG) &#123;
+            var t = ak(aG, (this.n.bitLength() + 7) &gt;&gt; 3);
+            if (t == null) &#123;
+                return null
+            &#125;
+            var aH = this.doPublic(t);
+            if (aH == null) &#123;
+                return null
+            &#125;
+            var z = aH.toString(16);
+            if ((z.length &amp; 1) == 0) &#123;
+                return z
+            &#125; else &#123;
+                return &quot;0&quot; + z
+            &#125;
+        &#125;
+        N.prototype.doPublic = Z;
+        N.prototype.setPublic = p;
+        N.prototype.encrypt = q;
+        var ad = &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/&quot;;
+        var Y = &quot;=&quot;;
+        function ai(aG) &#123;
+            var z;
+            var aH;
+            var t = &quot;&quot;;
+            for (z = 0; z + 3 &lt;= aG.length; z += 3) &#123;
+                aH = parseInt(aG.substring(z, z + 3), 16);
+                t += ad.charAt(aH &gt;&gt; 6) + ad.charAt(aH &amp; 63)
+            &#125;
+            if (z + 1 == aG.length) &#123;
+                aH = parseInt(aG.substring(z, z + 1), 16);
+                t += ad.charAt(aH &lt;&lt; 2)
+            &#125; else &#123;
+                if (z + 2 == aG.length) &#123;
+                    aH = parseInt(aG.substring(z, z + 2), 16);
+                    t += ad.charAt(aH &gt;&gt; 2) + ad.charAt((aH &amp; 3) &lt;&lt; 4)
+                &#125;
+            &#125;
+            while ((t.length &amp; 3) &gt; 0) &#123;
+                t += Y
+            &#125;
+            return t
+        &#125;
+        function a(aI) &#123;
+            var aG = &quot;&quot;;
+            var aH;
+            var t = 0;
+            var z;
+            for (aH = 0; aH &lt; aI.length; ++aH) &#123;
+                if (aI.charAt(aH) == Y) &#123;
+                    break
+                &#125;
+                v = ad.indexOf(aI.charAt(aH));
+                if (v &lt; 0) &#123;
+                    continue
+                &#125;
+                if (t == 0) &#123;
+                    aG += aF(v &gt;&gt; 2);
+                    z = v &amp; 3;
+                    t = 1
+                &#125; else &#123;
+                    if (t == 1) &#123;
+                        aG += aF((z &lt;&lt; 2) | (v &gt;&gt; 4));
+                        z = v &amp; 15;
+                        t = 2
+                    &#125; else &#123;
+                        if (t == 2) &#123;
+                            aG += aF(z);
+                            aG += aF(v &gt;&gt; 2);
+                            z = v &amp; 3;
+                            t = 3
+                        &#125; else &#123;
+                            aG += aF((z &lt;&lt; 2) | (v &gt;&gt; 4));
+                            aG += aF(v &amp; 15);
+                            t = 0
+                        &#125;
+                    &#125;
+                &#125;
+            &#125;
+            if (t == 1) &#123;
+                aG += aF(z &lt;&lt; 2)
+            &#125;
+            return aG
+        &#125;
+        function W(aH) &#123;
+            var aG = a(aH);
+            var z;
+            var t = new Array();
+            for (z = 0; 2 * z &lt; aG.length; ++z) &#123;
+                t[z] = parseInt(aG.substring(2 * z, 2 * z + 2), 16)
+            &#125;
+            return t
+        &#125;
+        av.encrypt = function(aG, z) &#123;
+            var t = new N();
+            t.setPublic(a(aG), &quot;10001&quot;);
+            return ai(t.encrypt(z))
+        &#125;
+    &#125;
+)(window);
+  
+  
+  
+function get_pwd(pwd)&#123;
+    var ag = &quot;ANKi9PWuvDOsagwIVvrPx77mXNV0APmjySsYjB1/GtUTY6cyKNRl2RCTt608m9nYk5VeCG2EAZRQmQNQTyfZkw0Uo+MytAkjj17BXOpY4o6+BToi7rRKfTGl6J60/XBZcGSzN1XVZ80ElSjaGE8Ocg8wbPN18tbmsy761zN5SuIl&quot;;
+    var pwd_jm = window.encrypt(ag,pwd);
+    return pwd_jm;
+&#125;
+
+</code></pre>
+
+    </div>
+    
+    
+    
+    
+    
+    
+    
+</div>
+
+                <footer id="footer">
+    <div id="footer-wrap">
+        <div>
+            &copy;
+            2022 - 2023 老张博客
+            <span id="footer-icon">
+                <i class="fa-solid fa-font-awesome fa-fw"></i>
+            </span>
+            &commat;Zhang
+        </div>
+        <div>
+            Based on the <a target="_blank" rel="noopener" href="https://hexo.io">Hexo Engine</a> &amp;
+            <a target="_blank" rel="noopener" href="https://github.com/argvchs/hexo-theme-particlex">ParticleX Theme</a>
+        </div>
+        
+    </div>
+</footer>
+
+            </div>
+            </transition>
+            
+            <transition name="fade">
+            <div id="preview" ref="preview" v-show="previewShow">
+                <img id="preview-content" ref="previewContent" />
+            </div>
+            </transition>
+            
+        </div>
+        <script src="/js/main.js"></script>
+        
+        
+
+
+
+
+        
+    </body>
+</html>
